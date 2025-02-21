@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-runner
+  namespace: user-fave
+spec:
+  restartPolicy: Never
+  initContainers:
+  - name: clone-code
+    image: alpine/git
+    command: ["sh", "-c", "git clone http://localhost:3000/git/helloapp.git /code"]
+    volumeMounts:
+    - mountPath: /code
+      name: code-volume
+  containers:
+  - name: tester
+    image: python:3.9-slim
+    command: ["python3", "/code/helloworld.py"]
+    volumeMounts:
+    - mountPath: /code
+      name: code-volume
+  volumes:
+  - name: code-volume
+    persistentVolumeClaim:
+      claimName: code-pvc
