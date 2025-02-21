@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea
+  namespace: git-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitea
+  template:
+    metadata:
+      labels:
+        app: gitea
+    spec:
+      containers:
+      - name: gitea
+        image: gitea/gitea:latest
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: git-data
+          mountPath: /data
+      volumes:
+      - name: git-data
+        persistentVolumeClaim:
+          claimName: git-data-pvc
+    
